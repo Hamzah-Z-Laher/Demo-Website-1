@@ -857,46 +857,49 @@ select {
 @keyframes flash { 0%, 30% { background: var(--tint); } 100% { background: transparent; } }
 
 /* ==========================================================================
-   Services: "Check if we handle it" finder
+   Services: search bar under the page title
    ========================================================================== */
 
-.page-head-split { display: grid; grid-template-columns: 1fr 440px; gap: 64px; align-items: end; }
-
-.finder { background: var(--white); border: 1px solid var(--line-strong); padding: 28px; position: relative; }
-.finder label { display: block; font-family: var(--serif); font-size: 1.3rem; font-weight: 600; color: var(--ink); margin-bottom: 14px; }
+.finder { position: relative; max-width: 640px; margin-top: 36px; }
+.finder label { display: block; font-size: .95rem; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
 .finder-input { position: relative; }
-.finder-input svg { position: absolute; left: 14px; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); color: var(--steel); pointer-events: none; }
-.finder-input input { padding-left: 44px; font-size: 1.02rem; }
+.finder-input svg { position: absolute; left: 18px; top: 50%; width: 19px; height: 19px; transform: translateY(-50%); color: var(--steel); pointer-events: none; }
+.finder-input input { height: 58px; padding-left: 50px; font-size: 1.05rem; box-shadow: 0 1px 2px rgba(13,24,52,.04); }
+.finder.has-results .finder-input input { border-bottom-color: var(--line); }
 
-.finder-hints { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-.finder-hints button {
-  font: inherit; font-size: .82rem; color: var(--text);
-  background: var(--paper); border: 1px solid var(--line); border-radius: 999px;
-  padding: 5px 12px; cursor: pointer;
-  transition: border-color .2s ease, color .2s ease;
-}
-.finder-hints button:hover { border-color: var(--blue); color: var(--blue); }
-
-.finder-results { margin-top: 14px; border-top: 1px solid var(--line); }
+/* Results attach directly under the input */
+.finder-results { background: #fff; border: 1px solid var(--line-strong); border-top: 0; }
 .finder-results:empty { display: none; }
 .finder-results a {
-  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
-  padding: 11px 4px; border-bottom: 1px solid var(--line);
-  font-size: .95rem; color: var(--ink);
-  transition: background-color .2s ease, padding .3s var(--ease);
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 13px 18px; border-top: 1px solid var(--line);
+  font-size: .97rem; color: var(--ink);
+  transition: background-color .2s ease;
 }
-.finder-results a:hover { background: var(--tint); padding-left: 10px; }
-.finder-results a::before { content: ""; width: 6px; height: 6px; background: var(--blue); flex: none; align-self: center; margin-right: -4px; }
+.finder-results a:first-child { border-top: 0; }
+.finder-results a:hover { background: var(--tint); }
+.finder-results a::before { content: ""; width: 6px; height: 6px; background: var(--blue); flex: none; align-self: center; }
 .finder-results a span:first-of-type { flex: 1; }
 .finder-results small {
   font-stretch: 125%; font-size: .6rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
   color: var(--red); white-space: nowrap;
 }
 .finder-results mark { background: #fbe9a6; color: inherit; padding: 0 1px; }
-.finder-results p { margin: 0; padding: 14px 4px 2px; font-size: .92rem; color: var(--muted); }
+.finder-results p { margin: 0; padding: 14px 18px; font-size: .95rem; color: var(--muted); }
 .finder-results p a { display: inline; padding: 0; border: 0; color: var(--blue); font-weight: 600; }
 .finder-results p a::before { display: none; }
 .finder-results p a:hover { background: none; text-decoration: underline; }
+
+.finder-hints { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
+.finder-hints span { font-size: .85rem; color: var(--muted); margin-right: 2px; }
+.finder-hints button {
+  font: inherit; font-size: .82rem; color: var(--text);
+  background: #fff; border: 1px solid var(--line); border-radius: 999px;
+  padding: 5px 12px; cursor: pointer;
+  transition: border-color .2s ease, color .2s ease;
+}
+.finder-hints button:hover { border-color: var(--blue); color: var(--blue); }
+.finder.has-results .finder-hints { display: none; }
 
 /* ==========================================================================
    About: steps
@@ -912,11 +915,6 @@ select {
 .about-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
 .about-split .prose p { font-size: 1.08rem; }
 
-@media (max-width: 1080px) {
-  .page-head-split { grid-template-columns: 1fr; gap: 40px; align-items: start; }
-  .finder { max-width: 560px; }
-}
-
 @media (max-width: 920px) {
   .about-split { grid-template-columns: 1fr; gap: 40px; }
   .steps { grid-template-columns: 1fr; }
@@ -930,7 +928,9 @@ select {
   .group-btn { padding: 24px 0; grid-template-columns: 34px 1fr 36px; }
   .plus { width: 36px; height: 36px; }
   .group-inner { padding: 0 0 32px; }
-  .finder { padding: 20px; }
+  .finder { margin-top: 28px; }
+  .finder-input input { height: 54px; }
+  .finder-results a, .finder-results p { padding-left: 14px; padding-right: 14px; }
   .facts > div { grid-template-columns: 1fr; gap: 2px; }
 }
 
@@ -949,4 +949,12 @@ select {
 .page-head + section { padding-top: 72px; }
 @media (max-width: 720px) {
   .page-head + section { padding-top: 48px; }
+}
+
+/* Services: keep the brand mark fixed at the top so it doesn't move when results open */
+.page-head .wrap:has(.finder) .page-mark { top: 8px; transform: none; }
+
+@media (max-width: 720px) {
+  .finder-results a { flex-wrap: wrap; row-gap: 2px; }
+  .finder-results small { flex-basis: 100%; padding-left: 20px; }
 }

@@ -174,10 +174,16 @@ document.addEventListener('DOMContentLoaded', function () {
       var patterns = q.split(/\s+/).map(function (w) {
         return new RegExp('(^|[^a-z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
       });
-      var matches = entries.filter(function (e) {
+      // Rank: name starts with the search, then name contains it, then keyword/group matches.
+      var matches = entries.map(function (e, order) {
+        var name = e[0].toLowerCase();
         var hay = (e[0] + ' ' + e[2] + ' ' + groupNames[e[1]]).toLowerCase();
-        return patterns.every(function (p) { return p.test(hay); });
-      }).slice(0, 6);
+        if (!patterns.every(function (p) { return p.test(hay); })) return null;
+        var score = name.indexOf(q) === 0 ? 0 : patterns.every(function (p) { return p.test(name); }) ? 1 : 2;
+        return { e: e, score: score, order: order };
+      }).filter(Boolean).sort(function (a, b) {
+        return a.score - b.score || a.order - b.order;
+      }).slice(0, 6).map(function (m) { return m.e; });
 
       if (!matches.length) {
         resultsEl.innerHTML = '<p>Not on our list, but we may still be able to help. <a href="contact.html">Ask us</a>.</p>';
@@ -188,7 +194,13 @@ document.addEventListener('DOMContentLoaded', function () {
       }).join('');
     }
 
-    finderInput.addEventListener('input', runFinder);
+    // Hide the popular-search chips while results are showing.
+    function updateFinder() {
+      runFinder();
+      finderInput.closest('.finder').classList.toggle('has-results', resultsEl.innerHTML !== '');
+    }
+
+    finderInput.addEventListener('input', updateFinder);
     resultsEl.addEventListener('click', function (e) {
       var link = e.target.closest('a[href^="#"]');
       if (!link) return;
@@ -198,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.finder-hints button').forEach(function (b) {
       b.addEventListener('click', function () {
         finderInput.value = b.textContent;
-        runFinder();
+        updateFinder();
         finderInput.focus();
       });
     });
